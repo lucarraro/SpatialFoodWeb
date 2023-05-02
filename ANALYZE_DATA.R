@@ -25,7 +25,7 @@ mid = OCN$AG$A > median(OCN$AG$A) & distToOutlet > median(distToOutlet)
 position = 1*high + 2*mid + 3*low + 4*down
 kol <- hcl.colors(4, "Temps") # define colors
 
-foodWebs <- readMat("utilities/100FW_nSp100.mat") # load food webs
+foodWebs <- readMat("utilities/100FW_nSp100_c01.mat") # load food webs
 mat <- readMat("utilities/results_for_R.mat") # load simulation results
 
 if (!file.exists("utilities/FW_indices.rda")){
@@ -73,7 +73,7 @@ if (!file.exists("utilities/FW_indices.rda")){
   df[["Nestedness"]] <- Nestedness
   df[["NicheOverlap"]] <- NicheOverlap
   df[["Omnivory"]] <- Omnivory
-  save(df,file="FW_indices.rda")
+  save(df,file="utilities/FW_indices.rda")
   
 } else {load("utilities/FW_indices.rda")}
 
@@ -93,23 +93,23 @@ if (createPlots){
           ylim=c(0,80),bty="n",xaxt="n",yaxt="n")
   axis(1,pos=0); axis(2,pos=0.35)
   boxplot(Connectance ~ pos,df,subset= nT==2 & nL==2 & dR==2 & dB==2 & vUp==2,outline=F,col=kol,
-          ylim=c(0.1,0.4), bty="n",xaxt="n",yaxt="n")
-  axis(1,pos=0.1); axis(2,pos=0.35)
+          ylim=c(0.05,0.2), bty="n",xaxt="n",yaxt="n")
+  axis(1,pos=0.05); axis(2,pos=0.35)
   boxplot(LinkDensity ~ pos,df,subset= nT==2 & nL==2 & dR==2 & dB==2 & vUp==2,outline=F,col=kol,
-           ylim=c(0,16),bty="n",xaxt="n",yaxt="n")
-  axis(1,pos=0); axis(2,pos=0.35,at=seq(0,16,2))
+           ylim=c(0,10),bty="n",xaxt="n",yaxt="n")
+  axis(1,pos=0); axis(2,pos=0.35,at=seq(0,10,2))
   boxplot(Modularity ~ pos,df,subset= nT==2 & nL==2 & dR==2 & dB==2 & vUp==2,outline=F,col=kol,
+          ylim=c(0.1,0.5),bty="n",xaxt="n",yaxt="n")
+  axis(1,pos=0.1); axis(2,pos=0.35,at=seq(0,0.5,0.1))
+  boxplot(Nestedness ~ pos,df,subset= nT==2 & nL==2 & dR==2 & dB==2 & vUp==2,outline=F,col=kol,
           ylim=c(0,0.4),bty="n",xaxt="n",yaxt="n")
   axis(1,pos=0); axis(2,pos=0.35,at=seq(0,0.4,0.1))
-  boxplot(Nestedness ~ pos,df,subset= nT==2 & nL==2 & dR==2 & dB==2 & vUp==2,outline=F,col=kol,
+  boxplot(NicheOverlap ~ pos,df,subset= nT==2 & nL==2 & dR==2 & dB==2 & vUp==2,outline=F,col=kol,
+          ylim=c(0,0.5),bty="n",xaxt="n",yaxt="n")
+  axis(1,pos=0); axis(2,pos=0.35,at=seq(0.0,0.5,0.1))
+  boxplot(Omnivory ~ pos,df,subset= nT==2 & nL==2 & dR==2 & dB==2 & vUp==2,outline=F,col=kol,
           ylim=c(0,0.8),bty="n",xaxt="n",yaxt="n")
   axis(1,pos=0); axis(2,pos=0.35,at=seq(0,0.8,0.2))
-  boxplot(NicheOverlap ~ pos,df,subset= nT==2 & nL==2 & dR==2 & dB==2 & vUp==2,outline=F,col=kol,
-          ylim=c(0.1,0.7),bty="n",xaxt="n",yaxt="n")
-  axis(1,pos=0.1); axis(2,pos=0.35,at=seq(0.1,0.7,0.2))
-  boxplot(Omnivory ~ pos,df,subset= nT==2 & nL==2 & dR==2 & dB==2 & vUp==2,outline=F,col=kol,
-          ylim=c(0.2,0.7),bty="n",xaxt="n",yaxt="n")
-  axis(1,pos=0.2); axis(2,pos=0.35,at=seq(0.2,0.7,0.1))
   dev.off()
 }
 
@@ -151,7 +151,7 @@ evalFracVar <- function(field,DF){
 }
 
 fracVar <- data.frame(matrix(0,4,7), row.names=c("FW","dO","logA", "res"))
-pVal <- data.frame(matrix(0,3,7), row.names=c("FW","dO","logA"))
+pVal <- data.frame(matrix(NaN,3,7), row.names=c("FW","dO","logA"))
 coefMat <- data.frame(matrix(0,2,7), row.names=c("dO","logA"))
 CV <- data.frame(matrix(0,1,7), row.names=c("CV"))
 names(fracVar) <- names(pVal) <- names(coefMat) <- names(CV) <- 
@@ -164,6 +164,7 @@ for (i in 1:7){
   coefMat[nam] <- out$coef
   CV[nam] <- sd(DF[[nam]],na.rm=T)/mean(DF[[nam]],na.rm=T)
 }
+table1 <- t(rbind(CV,fracVar))
 
 singleMFW_trends <- vector("list",7)
 names(singleMFW_trends) <- names(fracVar)
@@ -484,24 +485,24 @@ df.Long <- data.frame(Connectance = c(df.Resh$Connectance, df.Resh$Connectance.R
 if (createPlots){
   pdf(file="Fig7.pdf",width=20/2.54,height=15/2.54)
   par(mfrow=c(2,3))
-  boxplot(Connectance ~ pos + model,df.Long,outline=F,col=kol,xaxt="n",yaxt="n",ylim=c(0.1,0.35),
+  boxplot(Connectance ~ pos + model,df.Long,outline=F,col=kol,xaxt="n",yaxt="n",ylim=c(0.05,0.2),
           ylab="",xlab="",bty="n",main="Connectance")
-  axis(1,pos=0.1,at=seq(2.5,10.5,4)); axis(2,pos=0.35,at=seq(0.1,0.35,0.05)); abline(v=c(4.5,8.5))
-  boxplot(LinkDensity ~ pos + model,df.Long,outline=F,col=kol,xaxt="n",yaxt="n",ylim=c(0,15),
+  axis(1,pos=0.05,at=seq(2.5,10.5,4)); axis(2,pos=0.35,at=seq(0.05,0.2,0.05)); abline(v=c(4.5,8.5))
+  boxplot(LinkDensity ~ pos + model,df.Long,outline=F,col=kol,xaxt="n",yaxt="n",ylim=c(0,10),
           ylab="",xlab="",bty="n",main="Link density")
-  axis(1,pos=0,at=seq(2.5,10.5,4)); axis(2,pos=0.35,at=seq(0,15,5)); abline(v=c(4.5,8.5))
+  axis(1,pos=0,at=seq(2.5,10.5,4)); axis(2,pos=0.35,at=seq(0,10,5)); abline(v=c(4.5,8.5))
   boxplot(Modularity ~ pos + model,df.Long,outline=F,col=kol,xaxt="n",yaxt="n",ylim=c(0,0.6),
           ylab="",xlab="",bty="n",main="Modularity")
-  axis(1,pos=0,at=seq(2.5,10.5,4)); axis(2,pos=0.35,at=seq(0,0.6,0.2)); abline(v=c(4.5,8.5))
-  boxplot(Nestedness ~ pos + model,df.Long,outline=F,col=kol,xaxt="n",yaxt="n",ylim=c(0,0.8),
+  axis(1,pos=0,at=seq(2.5,10.5,4)); axis(2,pos=0.35,at=seq(0,0.4,0.2)); abline(v=c(4.5,8.5))
+  boxplot(Nestedness ~ pos + model,df.Long,outline=F,col=kol,xaxt="n",yaxt="n",ylim=c(0,0.4),
           ylab="",xlab="",bty="n",main="Nestedness")
-  axis(1,pos=0,at=seq(2.5,10.5,4)); axis(2,pos=0.35,at=seq(0,0.8,0.2)); abline(v=c(4.5,8.5))
-  boxplot(NicheOverlap ~ pos + model,df.Long,outline=F,col=kol,xaxt="n",yaxt="n",ylim=c(0.1,0.7),
+  axis(1,pos=0,at=seq(2.5,10.5,4)); axis(2,pos=0.35,at=seq(0,0.4,0.1)); abline(v=c(4.5,8.5))
+  boxplot(NicheOverlap ~ pos + model,df.Long,outline=F,col=kol,xaxt="n",yaxt="n",ylim=c(0,0.6),
           ylab="",xlab="",bty="n",main="Niche overlap") 
-  axis(1,pos=0.1,at=seq(2.5,10.5,4)); axis(2,pos=0.35,at=seq(0.1,0.7,0.2)); abline(v=c(4.5,8.5))
-  boxplot(Omnivory ~ pos + model,df.Long,outline=F,col=kol,log="y",xaxt="n",yaxt="n",ylim=c(0.25,4),
+  axis(1,pos=0,at=seq(2.5,10.5,4)); axis(2,pos=0.35,at=seq(0.0,0.6,0.2)); abline(v=c(4.5,8.5))
+  boxplot(Omnivory ~ pos + model,df.Long,outline=F,col=kol,log="y",xaxt="n",yaxt="n",ylim=c(0.05,5),
           ylab="",xlab="",bty="n",main="Omnivory") 
-  axis(1,pos=0.25,at=seq(2.5,10.5,4)); axis(2,pos=0.35,at=c(0.25,0.5,1,2,4)); abline(v=c(4.5,8.5))
+  axis(1,pos=0.05,at=seq(2.5,10.5,4)); axis(2,pos=0.35,at=c(0.05,0.5,5)); abline(v=c(4.5,8.5))
   dev.off()
 }
 
@@ -589,9 +590,9 @@ if(createPlots){
   pdf(file="FigS4.pdf",width=20/2.54,height=15/2.54)
   par(mfrow=c(2,3))
   boxplot(Nestedness_norm ~ pos + nL, df, col=kol,main = "Effect of nutrient load",
-          subset = nT==2 & dR==2 & dB==2 & vUp==2, outline=F, ylim=c(0,2.5), 
+          subset = nT==2 & dR==2 & dB==2 & vUp==2, outline=F, ylim=c(0,3), 
           xlab = "", ylab="Nestedness (normalized)",xaxt="n",yaxt="n")
-  axis(1, pos=0, at = seq(2.5,10.5,4), labels=c("Low","Medium","High")); axis(2,pos=0.35,at=seq(0,2.5,0.5))
+  axis(1, pos=0, at = seq(2.5,10.5,4), labels=c("Low","Medium","High")); axis(2,pos=0.35,at=seq(0,3,1))
   abline(v=c(4.5,8.5),col="#909090"); abline(h=1)
   boxplot(Nestedness_norm ~ pos + nT, df, col=kol, main = "Effect of nutrient distribution",
           subset = nL==2 & dR==2 & dB==2 & vUp==2, outline=F, ylim=c(0,2),
@@ -622,9 +623,9 @@ if(createPlots){
   pdf(file="FigS5.pdf",width=20/2.54,height=15/2.54)
   par(mfrow=c(2,3))
   boxplot(NicheOverlap_norm ~ pos + nL, df, col=kol,main = "Effect of nutrient load",
-          subset = nT==2 & dR==2 & dB==2 & vUp==2, outline=F, ylim=c(0,3), 
+          subset = nT==2 & dR==2 & dB==2 & vUp==2, outline=F, ylim=c(0,4), 
           xlab = "", ylab="Niche Overlap (normalized)",xaxt="n",yaxt="n")
-  axis(1, pos=0, at = seq(2.5,10.5,4), labels=c("Low","Medium","High")); axis(2,pos=0.35,at=seq(0,3,0.5))
+  axis(1, pos=0, at = seq(2.5,10.5,4), labels=c("Low","Medium","High")); axis(2,pos=0.35,at=seq(0,4,1))
   abline(v=c(4.5,8.5),col="#909090"); abline(h=1)
   boxplot(NicheOverlap_norm ~ pos + nT, df, col=kol, main = "Effect of nutrient distribution",
           subset = nL==2 & dR==2 & dB==2 & vUp==2, outline=F, ylim=c(0,2),
@@ -632,14 +633,14 @@ if(createPlots){
   axis(1, pos=0, at = seq(2.5,10.5,4), labels=c("Flat","Downstream","Random")); axis(2,pos=0.35,at=seq(0,2,0.5))
   abline(v=c(4.5,8.5),col="#909090"); abline(h=1)
   boxplot(NicheOverlap_norm ~ pos + vUp, df, col=kol, main = "Effect of uptake velocity",
-          subset = nL==2 & nT==2 & dR==2 & dB==2, outline=F, ylim=c(0,2.5),
+          subset = nL==2 & nT==2 & dR==2 & dB==2, outline=F, ylim=c(0,3),
           xlab = "", ylab="",xaxt="n",yaxt="n")
-  axis(1, pos=0, at = seq(2.5,10.5,4), labels=c("Low","Medium","High")); axis(2,pos=0.35,at=seq(0,2.5,0.5))
+  axis(1, pos=0, at = seq(2.5,10.5,4), labels=c("Low","Medium","High")); axis(2,pos=0.35,at=seq(0,3,1))
   abline(v=c(4.5,8.5),col="#909090"); abline(h=1)
   boxplot(NicheOverlap_norm ~ pos + dR, df, col=kol, main = "Effect of dispersal rate",
-          subset = nL==2 & nT==2 & dB==2 & vUp==2, outline=F, ylim=c(0,2.5),
+          subset = nL==2 & nT==2 & dB==2 & vUp==2, outline=F, ylim=c(0,3),
           xlab = "", ylab="Niche Overlap (normalized)",xaxt="n",yaxt="n")
-  axis(1, pos=0, at = seq(2.5,10.5,4), labels=c("Low","Medium","High")); axis(2,pos=0.35,at=seq(0,2.5,0.5))
+  axis(1, pos=0, at = seq(2.5,10.5,4), labels=c("Low","Medium","High")); axis(2,pos=0.35,at=seq(0,3,1))
   abline(v=c(4.5,8.5),col="#909090"); abline(h=1)
   boxplot(NicheOverlap_norm ~ pos + dB, df, col=kol, main = "Effect of downstream bias",
           subset = nL==2 & nT==2 & dR==2 & vUp==2, outline=F, ylim=c(0,2),
@@ -655,27 +656,27 @@ if(createPlots){
   pdf(file="FigS6.pdf",width=20/2.54,height=15/2.54)
   par(mfrow=c(2,3))
   boxplot(Omnivory_norm ~ pos + nL, df, col=kol,main = "Effect of nutrient load",
-          subset = nT==2 & dR==2 & dB==2 & vUp==2, outline=F, ylim=c(0,1.5), 
+          subset = nT==2 & dR==2 & dB==2 & vUp==2, outline=F, ylim=c(0,2), 
           xlab = "", ylab="Omnivory (normalized)",xaxt="n",yaxt="n")
-  axis(1, pos=0, at = seq(2.5,10.5,4), labels=c("Low","Medium","High")); axis(2,pos=0.35,at=seq(0,3,0.5))
+  axis(1, pos=0, at = seq(2.5,10.5,4), labels=c("Low","Medium","High")); axis(2,pos=0.35,at=seq(0,2,1))
   abline(v=c(4.5,8.5),col="#909090"); abline(h=1)
   boxplot(Omnivory_norm ~ pos + nT, df, col=kol, main = "Effect of nutrient distribution",
-          subset = nL==2 & dR==2 & dB==2 & vUp==2, outline=F, ylim=c(0.75,1.25),
+          subset = nL==2 & dR==2 & dB==2 & vUp==2, outline=F, ylim=c(0.75,1.5),
           xlab = "", ylab="",xaxt="n",yaxt="n")
   axis(1, pos=0.75, at = seq(2.5,10.5,4), labels=c("Flat","Downstream","Random")); axis(2,pos=0.35,at=seq(0,2,0.25))
   abline(v=c(4.5,8.5),col="#909090"); abline(h=1)
   boxplot(Omnivory_norm ~ pos + vUp, df, col=kol, main = "Effect of uptake velocity",
-          subset = nL==2 & nT==2 & dR==2 & dB==2, outline=F, ylim=c(0.5,1.25),
+          subset = nL==2 & nT==2 & dR==2 & dB==2, outline=F, ylim=c(0,1.5),
           xlab = "", ylab="",xaxt="n",yaxt="n")
-  axis(1, pos=0.5, at = seq(2.5,10.5,4), labels=c("Low","Medium","High")); axis(2,pos=0.35,at=seq(0,2.5,0.25))
+  axis(1, pos=0, at = seq(2.5,10.5,4), labels=c("Low","Medium","High")); axis(2,pos=0.35,at=seq(0,2.5,0.25))
   abline(v=c(4.5,8.5),col="#909090"); abline(h=1)
   boxplot(Omnivory_norm ~ pos + dR, df, col=kol, main = "Effect of dispersal rate",
-          subset = nL==2 & nT==2 & dB==2 & vUp==2, outline=F, ylim=c(0.75,1.25),
+          subset = nL==2 & nT==2 & dB==2 & vUp==2, outline=F, ylim=c(0.25,1.5),
           xlab = "", ylab="Omnivory (normalized)",xaxt="n",yaxt="n")
-  axis(1, pos=0.75, at = seq(2.5,10.5,4), labels=c("Low","Medium","High")); axis(2,pos=0.35,at=seq(0,2.5,0.25))
+  axis(1, pos=0.25, at = seq(2.5,10.5,4), labels=c("Low","Medium","High")); axis(2,pos=0.35,at=seq(0,2.5,0.25))
   abline(v=c(4.5,8.5),col="#909090"); abline(h=1)
   boxplot(Omnivory_norm ~ pos + dB, df, col=kol, main = "Effect of downstream bias",
-          subset = nL==2 & nT==2 & dR==2 & vUp==2, outline=F, ylim=c(0.75,1.25),
+          subset = nL==2 & nT==2 & dR==2 & vUp==2, outline=F, ylim=c(0.75,1.5),
           xlab = "", ylab="",xaxt="n",yaxt="n")
   axis(1, pos=0.75, at = seq(2.5,10.5,4), labels=c("Low","Medium","High")); axis(2,pos=0.35,at=seq(0,2,0.25))
   abline(v=c(4.5,8.5),col="#909090"); abline(h=1)

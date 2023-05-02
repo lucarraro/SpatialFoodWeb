@@ -1,7 +1,7 @@
 clear all; close all; clc
 
 addpath('utilities');
-load('100FW_nSp100.mat')
+load('100FW_nSp100_c01.mat')
 load('OCN.mat')
 
 nSpecies=length(r_list.w1)+1;

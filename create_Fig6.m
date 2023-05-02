@@ -18,8 +18,8 @@ set(gca,'xtick',[-80:20:0],'ytick',[-0.1:0.1:0.3],'ylim',[-0.1 0.3])
 xlabel('\Delta Sp. Richness'); ylabel('\Delta Connectance')
 ax.(['a',num2str(pos)])=subplot(6,4,4+pos); 
 binscatter(dfDelta.alphaDiv(dfDelta.pos==pos),dfDelta.LinkDensity(dfDelta.pos==pos),...
-    [-80:5:0],[-16:1:0],1000,ax.(['a',num2str(pos)]),colmap.(['c',num2str(pos)]));  
-hold on; plot([-80 0],[0 0],'--m'); set(gca,'xtick',[-80:20:0],'ytick',[-16:4:0])
+    [-80:5:0],[-10:1:0],1000,ax.(['a',num2str(pos)]),colmap.(['c',num2str(pos)]));  
+hold on; plot([-80 0],[0 0],'--m'); set(gca,'xtick',[-80:20:0],'ytick',[-10:2:0])
 xlabel('\Delta Sp. Richness'); ylabel('\Delta Link Density')
 ax.(['a',num2str(pos)])=subplot(6,4,8+pos); 
 binscatter(dfDelta.alphaDiv(dfDelta.pos==pos),dfDelta.Modularity(dfDelta.pos==pos),...
@@ -51,9 +51,9 @@ histogram(dfDelta.Connectance(dfDelta.pos==pos),[-0.1:0.025:0.25],'FaceColor',co
     'Normalization','probability')
 set(gca,'tickdir','out','view',[90 -90],'xlim',[-0.1 0.3],'ylim',[0 0.7])
 ax.(['a',num2str(pos)])=subplot(6,4,4+pos); 
-histogram(dfDelta.LinkDensity(dfDelta.pos==pos),[-16:1:0],'FaceColor',colmap.(['c',num2str(pos)])(1,:),...
+histogram(dfDelta.LinkDensity(dfDelta.pos==pos),[-10:1:0],'FaceColor',colmap.(['c',num2str(pos)])(1,:),...
     'Normalization','probability')
-set(gca,'tickdir','out','view',[90 -90],'xlim',[-16 0],'ylim',[0 0.7])
+set(gca,'tickdir','out','view',[90 -90],'xlim',[-10 0],'ylim',[0 0.7])
 ax.(['a',num2str(pos)])=subplot(6,4,8+pos); 
 histogram(dfDelta.Modularity(dfDelta.pos==pos),[-0.35:0.035:0.15],'FaceColor',colmap.(['c',num2str(pos)])(1,:),...
     'Normalization','probability')

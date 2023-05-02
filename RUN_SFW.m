@@ -1,7 +1,7 @@
 clear all; close all; clc
 
 addpath('utilities')
-load('100FW_nSp100.mat')
+load('100FW_nSp100_c01.mat')
 load('OCN.mat')
 
 nJob=input('Enter nJob: ');
@@ -68,6 +68,7 @@ for ind_FW=1:nFW
                 [t,y] = ODE_full(parameters,tspan,y0);
                 y0=y(end,:)';
                 y0(y0<y_thr)=0; % variables with density <y_thr are set to 0
+                y0(y_mat(:,ind_time)==0 & y0~=0) = 0; % inhibit "resurrection" (otherwise the simulation might never converge)
                 y_mat(:,ind_time+1)=y0;
                 reltol=abs(y_mat(:,ind_time+1)-y_mat(:,ind_time))./y_mat(:,ind_time+1);
                 reltol(reltol==Inf)=-Inf; reltol(isnan(reltol))=-Inf;

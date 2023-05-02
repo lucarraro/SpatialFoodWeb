@@ -2,6 +2,7 @@ rm(list=ls())
 
 library(deSolve)
 library(R.matlab)
+library(OCNet)
 # Niche model
 # bodymass: a numeric vector of species body masses
 # NF.Prop: a 0-1 value or "free": the proportion of nutrient feeders, which include basal species (producers) and consumers feeding also on nutrient. "free" means no constraint and take whatever the model generated.
@@ -97,7 +98,7 @@ for (ind in 1:nFW){
   bodymass <- rlnorm(nSp, log(MassMean), log(MassSD))
   bodymass <- sort(bodymass,decreasing = T) # indexing sorted by mass (1st is largest)
   set.seed(ind)
-  Web <-  Nic(bodymass, NF.Prop=0.05, Connectance=0.2,Cannibalism=T)
+  Web <-  Nic(bodymass, NF.Prop=0.05, Connectance=0.1,Cannibalism=T)
   D <- Web$D # the generated food web as a diet matrix, cols eat rows.
   NF <- Web$NF # nutrient feeders in the web.
   bodymass_list[[ind]] <- bodymass
@@ -120,7 +121,7 @@ for (ind in 1:nFW){
   A_list[[ind]] <- A
 }
 
-writeMat('utilities/100FW_nSp100.mat',bodymass_list=bodymass_list, dietMatrix_list=dietMatrix_list,
+writeMat('utilities/100FW_nSp100_c01.mat',bodymass_list=bodymass_list, dietMatrix_list=dietMatrix_list,
          nutrientFeeders_list=nutrientFeeders_list, r_list=r_list, A_list=A_list)
 
 # create OCN
