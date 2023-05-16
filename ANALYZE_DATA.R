@@ -181,27 +181,23 @@ for (i in 1:100){
   }
 }
 
-singleTrends_dO <- singleTrends_logA <-data.frame(matrix(0,4,7))
+singleTrends_dO <- singleTrends_logA <-data.frame(matrix(0,2,7))
 names(singleTrends_dO) <- names(singleTrends_logA) <- names(fracVar)
 for (j in 1:7){
   nam <- names(fracVar)[j]
-  singleTrends_dO[1,j] <-  sum(singleMFW_trends[[nam]][,1] > 0 &  singleMFW_trends[[nam]][,2] < 0.05) # significant pos
-  singleTrends_dO[2,j] <-  sum(singleMFW_trends[[nam]][,1] > 0 &  singleMFW_trends[[nam]][,2] > 0.05) # non-sig pos
-  singleTrends_dO[3,j] <-  sum(singleMFW_trends[[nam]][,1] < 0 &  singleMFW_trends[[nam]][,2] > 0.05) # non-sig neg
-  singleTrends_dO[4,j] <-  sum(singleMFW_trends[[nam]][,1] < 0 &  singleMFW_trends[[nam]][,2] < 0.05) # significant neg
-  singleTrends_logA[1,j] <-  sum(singleMFW_trends[[nam]][,3] > 0 &  singleMFW_trends[[nam]][,4] < 0.05) # significant pos
-  singleTrends_logA[2,j] <-  sum(singleMFW_trends[[nam]][,3] > 0 &  singleMFW_trends[[nam]][,4] > 0.05) # non-sig pos
-  singleTrends_logA[3,j] <-  sum(singleMFW_trends[[nam]][,3] < 0 &  singleMFW_trends[[nam]][,4] > 0.05) # non-sig neg
-  singleTrends_logA[4,j] <-  sum(singleMFW_trends[[nam]][,3] < 0 &  singleMFW_trends[[nam]][,4] < 0.05) # significant neg
+  singleTrends_dO[1,j] <-  sum(singleMFW_trends[[nam]][,1] > 0) 
+  singleTrends_dO[2,j] <-  sum(singleMFW_trends[[nam]][,1] < 0) 
+  singleTrends_logA[1,j] <-  sum(singleMFW_trends[[nam]][,3] > 0) 
+  singleTrends_logA[2,j] <-  sum(singleMFW_trends[[nam]][,3] < 0) 
 }
 
 if(createPlots){
 pdf(file="Fig3.pdf",width=20/2.54,height=8/2.54)
 par(mfrow=c(1,2))
-barplot(as.matrix(singleTrends_dO), col=hcl.colors(4,"Blue-Red"), 
+barplot(as.matrix(singleTrends_dO), col=hcl.colors(2,"Blue-Red"), 
         main="Effect of distance to outlet",ylab="Fraction of meta-food web realizations")
 abline(h=c(5,95),col="#909090")
-barplot(as.matrix(singleTrends_logA), col=hcl.colors(4,"Blue-Red"), main="Effect of drainage area")
+barplot(as.matrix(singleTrends_logA), col=hcl.colors(2,"Blue-Red"), main="Effect of drainage area")
 abline(h=c(5,95),col="#909090")
 dev.off()
 }
